@@ -1,24 +1,28 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "eu-west-1"
 }
 
-resource "aws_instance" "demo-server" {
-    ami = "ami-053b0d53c279acc90"
+resource "aws_instance" "d-server" {
+    ami = "ami-03fd334507439f4d1"
     instance_type = "t2.micro"
-    key_name = "dpp"
+    key_name = "vivy"
     //security_groups = [ "demo-sg" ]
     vpc_security_group_ids = [aws_security_group.demo-sg.id]
-    subnet_id = aws_subnet.dpp-public-subnet-01.id 
+    subnet_id = aws_subnet.vivy-public-subnet-01.id 
+    for_each = toset(["jenkins-master", "build-slave", "ansible"])
+   tags = {
+     Name = "${each.key}"
+   }
 
 }
 
 resource "aws_security_group" "demo-sg" {
   name        = "demo-sg"
   description = "SSH Access"
-  vpc_id = aws_vpc.dpp-vpc.id 
+  vpc_id = aws_vpc.vivy-vpc.id 
   
   ingress {
-    description      = "Shh access"
+    description      = "Ssh access"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
@@ -39,55 +43,55 @@ resource "aws_security_group" "demo-sg" {
   }
 }
 
-resource "aws_vpc" "dpp-vpc" {
+resource "aws_vpc" "vivy-vpc" {
   cidr_block = "10.1.0.0/16"
   tags = {
-    Name = "dpp-vpc"
+    Name = "vivy-vpc"
   }
   
 }
 
-resource "aws_subnet" "dpp-public-subnet-01" {
-  vpc_id = aws_vpc.dpp-vpc.id
+resource "aws_subnet" "vivy-public-subnet-01" {
+  vpc_id = aws_vpc.vivy-vpc.id
   cidr_block = "10.1.1.0/24"
   map_public_ip_on_launch = "true"
-  availability_zone = "us-east-1a"
+  availability_zone = "eu-west-1a"
   tags = {
-    Name = "dpp-public-subent-01"
+    Name = "vivy-public-subnet-01"
   }
 }
 
-resource "aws_subnet" "dpp-public-subnet-02" {
-  vpc_id = aws_vpc.dpp-vpc.id
+resource "aws_subnet" "vivy-public-subnet-02" {
+  vpc_id = aws_vpc.vivy-vpc.id
   cidr_block = "10.1.2.0/24"
   map_public_ip_on_launch = "true"
-  availability_zone = "us-east-1b"
+  availability_zone = "eu-west-1c"
   tags = {
-    Name = "dpp-public-subent-02"
+    Name = "vivy-public-subent-02"
   }
 }
 
-resource "aws_internet_gateway" "dpp-igw" {
-  vpc_id = aws_vpc.dpp-vpc.id 
+resource "aws_internet_gateway" "vivy-igw" {
+  vpc_id = aws_vpc.vivy-vpc.id 
   tags = {
-    Name = "dpp-igw"
+    Name = "vivy-igw"
   } 
 }
 
-resource "aws_route_table" "dpp-public-rt" {
-  vpc_id = aws_vpc.dpp-vpc.id 
+resource "aws_route_table" "vivy-public-rt" {
+  vpc_id = aws_vpc.vivy-vpc.id 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.dpp-igw.id 
+    gateway_id = aws_internet_gateway.vivy-igw.id 
   }
 }
 
-resource "aws_route_table_association" "dpp-rta-public-subnet-01" {
-  subnet_id = aws_subnet.dpp-public-subnet-01.id
-  route_table_id = aws_route_table.dpp-public-rt.id   
+resource "aws_route_table_association" "vivy-rta-public-subnet-01" {
+  subnet_id = aws_subnet.vivy-public-subnet-01.id
+  route_table_id = aws_route_table.vivy-public-rt.id   
 }
 
-resource "aws_route_table_association" "dpp-rta-public-subnet-02" {
-  subnet_id = aws_subnet.dpp-public-subnet-02.id 
-  route_table_id = aws_route_table.dpp-public-rt.id   
+resource "aws_route_table_association" "vivy-rta-public-subnet-02" {
+  subnet_id = aws_subnet.vivy-public-subnet-02.id 
+  route_table_id = aws_route_table.vivy-public-rt.id   
 }

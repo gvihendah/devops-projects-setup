@@ -1,9 +1,22 @@
-provider "aws" {
-  region = "us-east-1"
-}
+# provider "aws" {
+#   region = "eu-west-1"
 
-resource "aws_instance" "demo-server" {
-    ami = "ami-022e1a32d3f742bd8"
-    instance_type = "t2.micro"
-    key_name = "dpp"
-}
+# }
+
+# resource "aws_instance" "d-server" {
+#     ami = "ami-0a89fa9a6d8c7ad98"
+#     instance_type = "t2.micro"
+#     key_name = "vivy"
+
+# }
+
+
+
+
+
+
+
+
+
+
+
