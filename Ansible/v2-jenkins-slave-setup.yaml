@@ -14,8 +14,9 @@
       state: present
 
   - name: download maven packages 
-    get_url:
+    get_url: 
       url: https://dlcdn.apache.org/maven/maven-3/3.9.2/binaries/apache-maven-3.9.2-bin.tar.gz
+      https://dlcdn.apache.org/maven/maven-3/3.9.9/source/apache-maven-3.9.9-src.tar.gz
       dest: /opt
 
   - name: extract maven packages 
