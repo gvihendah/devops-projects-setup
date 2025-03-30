@@ -103,3 +103,15 @@ resource "aws_route_table_association" "vivy-rta-public-subnet-02" {
   subnet_id = aws_subnet.vivy-public-subnet-02.id 
   route_table_id = aws_route_table.vivy-public-rt.id   
 }
+
+  module "sgs" {
+    source = "../sg_eks"
+    vpc_id     =     aws_vpc.vivy-vpc.id
+ }
+
+  module "eks" {
+       source = "../eks"
+       vpc_id     =     aws_vpc.vivy-vpc.id
+       subnet_ids = [aws_subnet.vivy-public-subnet-01.id,aws_subnet.vivy-public-subnet-02.id]
+       sg_ids = module.sgs.security_group_public
+ }
